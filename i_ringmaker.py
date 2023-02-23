@@ -1,6 +1,6 @@
 """
 This script is convert .mp3 files to .m4r to make ringtone for iphone. 
-Just run script and drop .mp3 file to commandline.
+Just run script and drop .mp3 file to the command line.
 
 Autor: Andrew Lihasenko
 """
@@ -33,14 +33,20 @@ while True:
         break
     else:
         print('Вы ввели некорректное время {}'.format(value), 'попробуйте еще раз')
+try:
+    os.chdir(file_path)
+    # ffmpeg -ss 00:00:10 -t 00:00:30 -i About_You_extract.mp3 -vn -acodec aac About_You_extract.m4a
+    subprocess.run(['ffmpeg', '-ss', start, '-t', '00:00:40', '-i', file_name, '-vn', '-acodec', 'aac',
+                    '%s_ringtone.m4a' % name[0]])
 
-os.chdir(file_path)
-# ffmpeg -ss 00:00:10 -t 00:00:30 -i About_You_extract.mp3 -vn -acodec aac About_You_extract.m4a
-subprocess.run(['ffmpeg', '-ss', start, '-t', '00:00:40', '-i', file_name, '-vn', '-acodec', 'aac', '%s_ringtone.m4a' %name[0]])
-
-for f in os.listdir(file_path):
-    if f == name[0] + '_ringtone.m4a':
-        m4a_name = os.path.splitext(f)
-        m4a_path = os.path.abspath(f)
-        head = os.path.split(m4a_path)
-        os.rename(m4a_path, os.path.join(head[0], m4a_name[0] + '.m4r'))
+    for f in os.listdir(file_path):
+        if f == name[0] + '_ringtone.m4a':
+            m4a_name = os.path.splitext(f)
+            m4a_path = os.path.abspath(f)
+            head = os.path.split(m4a_path)
+            os.rename(m4a_path, os.path.join(head[0], m4a_name[0] + '.m4r'))
+except FileNotFoundError as ex:
+    print("\n########################################## "
+          "\nYou don't have installed ffmpeg library \n https://www.ffmpeg.org/download.html#build-mac \n"
+          "\tOR\n brew install ffmpeg")
+    print(ex.args)
